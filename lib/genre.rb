@@ -1,6 +1,6 @@
 require "pry"
 class Genre
-  attr_accessor :name, :genres
+  attr_accessor :name, :songs
   @@all = []
 
   def initialize(name)
@@ -37,5 +37,9 @@ class Genre
   def add_song(song)
     @songs << song unless @songs.include?(song)
     song.genre = self unless song.genre
+  end
+
+  def artists
+    songs.collect {|item| item.artist }.uniq
   end
 end

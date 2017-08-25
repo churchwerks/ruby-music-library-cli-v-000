@@ -35,6 +35,10 @@ class Artist
     song.artist = self unless song.artist
   end
 
+  def genres
+    songs.collect {|item| item.genre }.uniq
+  end
+
   def self.create_by_name(artist_name)
     artist = self.new(artist_name)
     artist.save
