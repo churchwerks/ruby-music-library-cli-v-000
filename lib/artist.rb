@@ -5,6 +5,7 @@ class Artist
 
   def initialize(name)
     @name = name
+    @songs = []
   end
 
   def self.all
@@ -27,5 +28,32 @@ class Artist
     artist = Artist.new(name)
     artist.save
     artist
+  end
+
+  def add_song(song)
+    if self.songs.detect {|item| item.name == song.name} == nil
+      @songs << song
+    else
+      song.artist = self
+    end
+    song.artist == "" ? song.artist = self : nil
+  end
+
+  def self.create_by_name(artist_name)
+    artist = self.new(artist_name)
+    artist.save
+    artist
+  end
+
+  def self.find_by_name(artist_name)
+    self.all.detect {|item| item.name == artist_name}
+  end
+
+  def self.find_or_create_by_name(artist_name)
+    self.find_by_name(artist_name) || self.create_by_name(artist_name)
+  end
+
+  def print_songs
+    self.songs.each { |title| puts "#{title.name}" }
   end
 end
