@@ -31,12 +31,8 @@ class Artist
   end
 
   def add_song(song)
-    if self.songs.detect {|item| item.name == song.name} == nil
-      @songs << song
-    else
-      song.artist = self
-    end
-    song.artist == "" ? song.artist = self : nil
+    @songs << song unless @songs.include?(song)
+    song.artist = self unless song.artist
   end
 
   def self.create_by_name(artist_name)
