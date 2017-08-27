@@ -26,14 +26,6 @@ class Genre
     @@all << self
   end
 
-  def self.find_by_name(name)
-    self.all.detect{|item| item.name == name}
-  end
-
-  def self.find_or_create_by_name(genre)
-    self.find_by_name(genre) || self.create(genre)
-  end
-
   def self.create(name)
     genre = Genre.new(name)
     genre.save

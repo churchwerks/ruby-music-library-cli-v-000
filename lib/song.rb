@@ -2,28 +2,27 @@ require 'pry'
 require_relative '../config/environment.rb'
 class Song
   extend Concerns::Findable
-  #include Memorable::InstanceMethods
-
-  #include Paramable::InstanceMethods
-
   attr_accessor :name
   attr_reader :artist, :genre
   @@all = []
 
   def initialize(name, artist = nil, genre = nil)
     @name = name
+    #binding.pry
     self.artist = artist if artist
     self.genre = genre if genre
   end
 
   def artist=(artist)
     @artist = artist
-    artist.add_song(self) if artist
+    #binding.pry
+    artist.add_song(self)
   end
 
   def genre=(genre)
     @genre = genre
-    genre.add_song(self) if genre
+    #binding.pry
+    genre.add_song(self)
   end
 
   def self.all
@@ -42,6 +41,7 @@ class Song
     song = Song.new(name)
     song.save
     song
+    #binding.pry
   end
 
   def self.find_by_name(song_name)
@@ -61,20 +61,14 @@ class Song
     filename = filename.split(" - ")
     artist_name = filename[0]
     song_name = filename[1]
-    song = self.new
-    song.name = song_name
-    song.artist_name = artist_name
-    song
+    genre_name = filename[2]
+    artist = Artist.find_or_create_by_name(artist_name)
+    genre = Genre.find_or_create_by_name(genre_name)
+    #binding.pry
+    song = self.new(song_name, artist, genre)
   end
 
   def self.create_from_filename(filename)
-    filename = filename.gsub!(".mp3", "")
-    filename = filename.split(" - ")
-    artist_name = filename[0]
-    song_name = filename[1]
-    song = self.create
-    song.name = song_name
-    song.artist_name = artist_name
-    song
+    new_from_filename(filename).tap{ |s| s.save }
   end
 end
