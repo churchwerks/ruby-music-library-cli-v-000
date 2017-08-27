@@ -1,9 +1,9 @@
 require 'pry'
 require_relative '../config/environment.rb'
 class Artist
-  #extend Memorable::ClassMethods
-  #include Memorable::InstanceMethods
   extend Concerns::Findable
+  #include Memorable::InstanceMethods
+
   #include Paramable::InstanceMethods
   attr_accessor :name, :songs
   @@all = []
@@ -54,9 +54,9 @@ class Artist
     self.all.detect {|item| item.name == artist_name}
   end
 
-  def self.find_or_create_by_name(artist_name)
-    self.find_by_name(artist_name) || self.create_by_name(artist_name)
-  end
+  #def self.find_or_create_by_name(artist_name)
+    #self.find_by_name(artist_name) || self.create_by_name(artist_name)
+  #end
 
   def print_songs
     self.songs.each { |title| puts "#{title.name}" }

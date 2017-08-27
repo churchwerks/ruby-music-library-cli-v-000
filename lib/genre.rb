@@ -1,5 +1,7 @@
-require "pry"
+require 'pry'
+require_relative '../config/environment.rb'
 class Genre
+  extend Concerns::Findable
   attr_accessor :name, :songs
   @@all = []
 
@@ -22,6 +24,14 @@ class Genre
 
   def save
     @@all << self
+  end
+
+  def self.find_by_name(name)
+    self.all.detect{|item| item.name == name}
+  end
+
+  def self.find_or_create_by_name(genre)
+    self.find_by_name(genre) || self.create(genre)
   end
 
   def self.create(name)

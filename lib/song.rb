@@ -1,9 +1,9 @@
 require 'pry'
 require_relative '../config/environment.rb'
 class Song
-  #extend Memorable::ClassMethods
+  extend Concerns::Findable
   #include Memorable::InstanceMethods
-  #extend Findable::ClassMethods
+
   #include Paramable::InstanceMethods
 
   attr_accessor :name
