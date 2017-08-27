@@ -1,5 +1,10 @@
-require "pry"
+require 'pry'
+require_relative '../config/environment.rb'
 class Artist
+  #extend Memorable::ClassMethods
+  #include Memorable::InstanceMethods
+  extend Concerns::Findable
+  #include Paramable::InstanceMethods
   attr_accessor :name, :songs
   @@all = []
 

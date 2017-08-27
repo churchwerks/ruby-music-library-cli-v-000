@@ -1,5 +1,11 @@
-require "pry"
+require 'pry'
+require_relative '../config/environment.rb'
 class Song
+  #extend Memorable::ClassMethods
+  #include Memorable::InstanceMethods
+  #extend Findable::ClassMethods
+  #include Paramable::InstanceMethods
+
   attr_accessor :name
   attr_reader :artist, :genre
   @@all = []
@@ -38,23 +44,12 @@ class Song
     song
   end
 
-  def self.new_by_name(song_name)
-    song = self.create
-    song.name = song_name
-    song
-  end
-
-  def self.create_by_name(song_name)
-    song = self.new_by_name(song_name)
-    song
-  end
-
   def self.find_by_name(song_name)
     self.all.detect {|item| item.name == song_name}
   end
 
   def self.find_or_create_by_name(song_name)
-    self.find_by_name(song_name) || self.create_by_name(song_name)
+    self.find_by_name(song_name) || self.create(song_name)
   end
 
   def self.alphabetical
