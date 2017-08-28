@@ -2,7 +2,10 @@ require 'pry'
 require_relative '../config/environment.rb'
 class Genre
   extend Concerns::Findable
-  attr_accessor :name, :songs
+
+  attr_accessor :name
+  attr_reader :songs
+
   @@all = []
 
   def initialize(name)
@@ -14,42 +17,32 @@ class Genre
     @@all
   end
 
-  def save
-    @@all << self
-  end
-
   def self.destroy_all
-    self.all.clear
+    all.clear
   end
 
   def save
-    @@all << self
+    self.class.all << self
+  end
+
+  def self.create(name)
+    genre = new(name)
+    genre.save
+    genre
+
+    # Or, as a one-liner:
+    # new(name).tap{ |g| g.save }
   end
 
   def self.find_by_name(name)
     self.all.detect{|item| item.name == name}
   end
 
-  def self.find_or_create_by_name(genre)
-    self.find_by_name(genre) || self.create(genre)
-  end
-
-  def self.create(name)
-    genre = Genre.new(name)
-    genre.save
-    genre
-  end
-
-  def songs
-    @songs
-  end
-
-  def add_song(song)
-    @songs << song unless @songs.include?(song)
-    song.genre = self unless song.genre
+  def self.find_or_create_by_name(name)
+    self.find_by_name(name) || self.create(name)
   end
 
   def artists
-    songs.collect {|item| item.artist }.uniq
+    songs.collect{ |s| s.artist }.uniq
   end
 end

@@ -1,13 +1,9 @@
 require 'pry'
 require_relative '../config/environment.rb'
 class Song
-  extend Concerns::Findable
-  #include Memorable::InstanceMethods
-
-  #include Paramable::InstanceMethods
-
   attr_accessor :name
   attr_reader :artist, :genre
+
   @@all = []
 
   def initialize(name, artist = nil, genre = nil)
@@ -18,12 +14,12 @@ class Song
 
   def artist=(artist)
     @artist = artist
-    artist.add_song(self) if artist
+    artist.add_song(self)
   end
 
   def genre=(genre)
     @genre = genre
-    genre.add_song(self) if genre
+    genre.songs << self unless genre.songs.include?(self)
   end
 
   def self.all
@@ -31,50 +27,41 @@ class Song
   end
 
   def self.destroy_all
-    self.all.clear
+    all.clear
   end
 
   def save
-    @@all << self
+    self.class.all << self
   end
 
   def self.create(name)
-    song = Song.new(name)
+    song = new(name)
     song.save
     song
+
+    # Or, as a one-liner:
+    # new(name).tap{ |s| s.save }
   end
 
-  def self.find_by_name(song_name)
-    self.all.detect {|item| item.name == song_name}
+  def self.find_by_name(name)
+    all.detect{ |s| s.name == name }
   end
 
-  def self.find_or_create_by_name(song_name)
-    self.find_by_name(song_name) || self.create(song_name)
-  end
-
-  def self.alphabetical
-    self.all.sort_by { |item| item.name}
+  def self.find_or_create_by_name(name)
+    find_by_name(name) || create(name)
   end
 
   def self.new_from_filename(filename)
-    filename = filename.gsub!(".mp3", "")
-    filename = filename.split(" - ")
-    artist_name = filename[0]
-    song_name = filename[1]
-    song = self.new
-    song.name = song_name
-    song.artist_name = artist_name
-    song
+    parts = filename.split(" - ")
+    artist_name, song_name, genre_name = parts[0], parts[1], parts[2].gsub(".mp3", "")
+
+    artist = Artist.find_or_create_by_name(artist_name)
+    genre = Genre.find_or_create_by_name(genre_name)
+
+    new(song_name, artist, genre)
   end
 
   def self.create_from_filename(filename)
-    filename = filename.gsub!(".mp3", "")
-    filename = filename.split(" - ")
-    artist_name = filename[0]
-    song_name = filename[1]
-    song = self.create
-    song.name = song_name
-    song.artist_name = artist_name
-    song
+    new_from_filename(filename).tap{ |s| s.save }
   end
 end

@@ -2,10 +2,10 @@ require 'pry'
 require_relative '../config/environment.rb'
 class Artist
   extend Concerns::Findable
-  #include Memorable::InstanceMethods
 
-  #include Paramable::InstanceMethods
-  attr_accessor :name, :songs
+  attr_accessor :name
+  attr_reader :songs
+
   @@all = []
 
   def initialize(name)
@@ -13,52 +13,42 @@ class Artist
     @songs = []
   end
 
+  def self.find_by_name(name)
+    self.all.detect{|item| item.name == name}
+  end
+
+
+  def find_or_create_by_name(name)
+    self.find_by_name(name) || self.create(name)
+  end
+
   def self.all
     @@all
   end
 
-  def save
-    @@all << self
-  end
-
   def self.destroy_all
-    self.all.clear
+    all.clear
   end
 
   def save
-    @@all << self
+    self.class.all << self
   end
 
   def self.create(name)
-    artist = Artist.new(name)
+    artist = new(name)
     artist.save
     artist
+
+    # Or, as a one-liner:
+    # new(name).tap{ |a| a.save }
   end
 
   def add_song(song)
-    @songs << song unless @songs.include?(song)
     song.artist = self unless song.artist
+    songs << song unless songs.include?(song)
   end
 
   def genres
-    songs.collect {|item| item.genre }.uniq
-  end
-
-  def self.create_by_name(artist_name)
-    artist = self.new(artist_name)
-    artist.save
-    artist
-  end
-
-  def self.find_by_name(artist_name)
-    self.all.detect {|item| item.name == artist_name}
-  end
-
-  #def self.find_or_create_by_name(artist_name)
-    #self.find_by_name(artist_name) || self.create_by_name(artist_name)
-  #end
-
-  def print_songs
-    self.songs.each { |title| puts "#{title.name}" }
+    songs.collect{ |s| s.genre }.uniq
   end
 end
