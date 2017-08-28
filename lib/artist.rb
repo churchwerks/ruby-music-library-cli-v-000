@@ -13,15 +13,6 @@ class Artist
     @songs = []
   end
 
-  def self.find_by_name(name)
-    self.all.detect{|item| item.name == name}
-  end
-
-
-  def find_or_create_by_name(name)
-    self.find_by_name(name) || self.create(name)
-  end
-
   def self.all
     @@all
   end
@@ -35,7 +26,12 @@ class Artist
   end
 
   def self.create(name)
-    new(name).tap{ |a| a.save }
+    artist = new(name)
+    artist.save
+    artist
+
+    # Or, as a one-liner:
+    # new(name).tap{ |a| a.save }
   end
 
   def add_song(song)

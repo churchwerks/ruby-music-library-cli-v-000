@@ -1,23 +1,17 @@
 require "pry"
 require_relative '../config/environment.rb'
 class MusicImporter
-  extend Concerns::Findable
-  attr_accessor :path
-  @@all = []
+  attr_reader :path
 
   def initialize(path)
     @path = path
   end
 
   def files
-    Dir.foreach(self.path) do |filename|
-      filename.end_with?(".mp3") ? @@all << filename : nil
-    end
-    @@all
+    @files ||= Dir.glob("#{path}/*.mp3").collect{ |f| f.gsub("#{path}/", "") }
   end
 
   def import
-    #binding.pry
-    @@all.each {|file_name| Song.create_from_filename(file_name) }
+    files.each{ |f| Song.create_from_filename(f) }
   end
 end
